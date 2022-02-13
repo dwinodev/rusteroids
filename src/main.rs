@@ -10,7 +10,9 @@ async fn main() {
         velocity: Vec2::new(0.0, 0.0),
         acceleration: Vec2::new(0.0, 0.0),
         angle: 0.0,
-        color: GREEN,
+        color: BLUE,
+
+        projectiles: Vec::new(),
     };
 
     let mut asteroid = Asteroid::new();
@@ -26,8 +28,14 @@ async fn main() {
 fn update(ship: &mut Ship, asteroid: &mut Asteroid) {
     ship.update();
     detect_collision(ship, asteroid);
+    for projectile in &mut ship.projectiles {
+        detect_collision_projectile(projectile, asteroid);
+    }
     asteroid.update();
     detect_collision(ship, asteroid);
+    for projectile in &mut ship.projectiles {
+        detect_collision_projectile(projectile, asteroid);
+    }
 }
 
 fn draw(ship: &Ship, asteroid: &Asteroid) {
@@ -40,14 +48,26 @@ fn draw(ship: &Ship, asteroid: &Asteroid) {
 fn collision_detected(ship: &Ship, asteroid: &Asteroid) -> bool {
     ship.position.distance(asteroid.position) < (ship.height / 1.5) + (asteroid.size / 1.1)
 }
+fn collision_detected_projectile(proj: &Projectile, asteroid: &Asteroid) -> bool {
+    proj.position.distance(asteroid.position) < (proj.size) + (asteroid.size / 1.1)
+}
 
 fn detect_collision(ship: &mut Ship, asteroid: &mut Asteroid) {
     if collision_detected(ship, asteroid) {
         ship.color = RED;
-        asteroid.color = RED
+        asteroid.color = RED;
     } else {
-        ship.color = GREEN;
-        asteroid.color = GREEN
+        ship.color = BLUE;
+        asteroid.color = GREEN;
+    }
+}
+fn detect_collision_projectile(proj: &mut Projectile, asteroid: &mut Asteroid) {
+    if collision_detected_projectile(proj, asteroid) {
+        proj.color = RED;
+        asteroid.color = RED;
+    } else {
+        proj.color = YELLOW;
+        asteroid.color = GREEN;
     }
 }
 
@@ -63,6 +83,8 @@ struct Ship {
 
     angle: f32,
     color: Color,
+
+    projectiles: Vec<Projectile>,
 }
 
 impl Ship {
@@ -82,6 +104,10 @@ impl Ship {
         (front_point, back_point_l, back_point_r)
     }
 
+    fn shoot(&mut self) {
+        self.projectiles.push(Projectile::new(self));
+    }
+
     fn update(&mut self) {
         if is_key_down(KeyCode::Up) {
             let x: f32 = self.position.x + (-0.1 * self.angle.cos());
@@ -94,16 +120,16 @@ impl Ship {
         }
 
         if is_key_down(KeyCode::Left) {
-            self.angle = self.angle - 0.05;
+            self.angle -= 0.05;
         }
 
         if is_key_down(KeyCode::Right) {
-            self.angle = self.angle + 0.05;
+            self.angle += 0.05;
         }
 
-        self.velocity = self.velocity + self.acceleration;
+        self.velocity += self.acceleration;
         self.velocity.clamp_length(-2.0, 2.0);
-        self.position = self.position + self.velocity;
+        self.position += self.velocity;
 
         self.acceleration = Vec2::new(0.0, 0.0);
 
@@ -117,6 +143,14 @@ impl Ship {
             self.position.y = screen_height();
         } else if self.position.y > screen_height() {
             self.position.y = 0.0;
+        }
+
+        if is_key_down(KeyCode::Space) {
+            self.shoot();
+        }
+
+        for projectile in &mut self.projectiles {
+            projectile.update();
         }
     }
 
@@ -163,13 +197,17 @@ impl Ship {
             self.position.y,
             self.height / 1.5,
             self.color,
-        )
+        );
+
+        for projectile in &self.projectiles {
+            projectile.draw();
+        }
     }
 }
 
-///////
-// SHIP
-///////
+///////////
+// ASTEROID
+///////////
 struct Asteroid {
     size: f32,
     position: Vec2,
@@ -181,19 +219,19 @@ struct Asteroid {
 
 impl Asteroid {
     fn new() -> Self {
-        let pos_x_rand = gen_range(0.0, screen_width());
-        let pos_y_rand = gen_range(0.0, screen_height());
-        let vel_x_rand: f32 = gen_range(0.5, 2.5);
-        let vel_y_rand: f32 = gen_range(0.5, 2.5);
+        let x_pos_rand = gen_range(0.0, screen_width());
+        let y_pos_rand = gen_range(0.0, screen_height());
+        let x_vel_rand: f32 = gen_range(0.5, 2.5);
+        let y_vel_rand: f32 = gen_range(0.5, 2.5);
         Self {
             size: 75.0,
-            position: Vec2::new(pos_x_rand, pos_y_rand),
-            velocity: Vec2::new(vel_x_rand, vel_y_rand),
+            position: Vec2::new(x_pos_rand, y_pos_rand),
+            velocity: Vec2::new(x_vel_rand, y_vel_rand),
             color: GREEN,
         }
     }
     fn update(&mut self) {
-        self.position = self.position + self.velocity;
+        self.position += self.velocity;
 
         if self.position.x < 0.0 - self.size * 2.0 {
             self.position.x = screen_width() + self.size * 2.0;
@@ -224,6 +262,61 @@ impl Asteroid {
             self.position.y,
             self.size / 1.1,
             self.color,
-        )
+        );
+    }
+}
+
+/////////////
+// PROJECTILE
+/////////////
+struct Projectile {
+    size: f32,
+    position: Vec2,
+    velocity: Vec2,
+    color: Color,
+    //acceleration: Vec2,
+    //angle: f32,
+}
+
+impl Projectile {
+    fn new(ship: &Ship) -> Self {
+        let x: f32 = ship.position.x + (-2.01 * ship.angle.cos());
+        let y: f32 = ship.position.y + (-2.01 * ship.angle.sin());
+        let direction = Vec2::new(x, y);
+        let distance = ship.position - direction;
+        Self {
+            size: 5.0,
+            position: ship.position,
+            velocity: distance,
+            color: YELLOW,
+        }
+    }
+    fn update(&mut self) {
+        self.position += self.velocity;
+
+        println!("{:?}", self.velocity);
+
+        if self.position.x < 0.0 - self.size * 2.0 {
+            self.position.x = screen_width() + self.size * 2.0;
+        } else if self.position.x > screen_width() + self.size * 2.0 {
+            self.position.x = 0.0 - self.size * 2.0;
+        }
+
+        if self.position.y < 0.0 - self.size * 2.0 {
+            self.position.y = screen_height() + self.size * 2.0;
+        } else if self.position.y > screen_height() + self.size * 2.0 {
+            self.position.y = 0.0 - self.size * 2.0;
+        }
+    }
+
+    fn draw(&self) {
+        draw_circle_lines(self.position.x, self.position.y, self.size, 1.0, WHITE);
+
+        draw_circle(
+            self.position.x,
+            self.position.y,
+            self.size / 1.1,
+            self.color,
+        );
     }
 }
