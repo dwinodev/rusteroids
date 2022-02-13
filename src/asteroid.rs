@@ -1,8 +1,9 @@
 use crate::prelude::*;
-/////////////
-// PROJECTILE
-/////////////
-pub struct Projectile {
+
+///////////
+// ASTEROID
+///////////
+pub struct Asteroid {
     pub size: f32,
     pub position: Vec2,
     velocity: Vec2,
@@ -11,23 +12,21 @@ pub struct Projectile {
     //angle: f32,
 }
 
-impl Projectile {
-    pub fn new(ship: &Ship) -> Self {
-        let x: f32 = ship.position.x + (-2.01 * ship.angle.cos());
-        let y: f32 = ship.position.y + (-2.01 * ship.angle.sin());
-        let direction = Vec2::new(x, y);
-        let distance = ship.position - direction;
+impl Asteroid {
+    pub fn new() -> Self {
+        let x_pos_rand = gen_range(0.0, screen_width());
+        let y_pos_rand = gen_range(0.0, screen_height());
+        let x_vel_rand: f32 = gen_range(0.5, 2.5);
+        let y_vel_rand: f32 = gen_range(0.5, 2.5);
         Self {
-            size: 5.0,
-            position: ship.position,
-            velocity: distance,
-            color: YELLOW,
+            size: 75.0,
+            position: Vec2::new(x_pos_rand, y_pos_rand),
+            velocity: Vec2::new(x_vel_rand, y_vel_rand),
+            color: GREEN,
         }
     }
     pub fn update(&mut self) {
         self.position += self.velocity;
-
-        println!("{:?}", self.velocity);
 
         if self.position.x < 0.0 - self.size * 2.0 {
             self.position.x = screen_width() + self.size * 2.0;
@@ -43,7 +42,15 @@ impl Projectile {
     }
 
     pub fn draw(&self) {
-        draw_circle_lines(self.position.x, self.position.y, self.size, 1.0, WHITE);
+        draw_poly_lines(
+            self.position.x,
+            self.position.y,
+            6,
+            self.size,
+            0.0,
+            1.0,
+            WHITE,
+        );
 
         draw_circle(
             self.position.x,
@@ -54,7 +61,7 @@ impl Projectile {
     }
 }
 
-impl Collidable for Projectile {
+impl Collidable for Asteroid {
     fn center(&self) -> Vec2 {
         self.position
     }
