@@ -7,7 +7,10 @@ a clone (enhancement?) of the classic asteroids game
 - shooting
     - delay
     - bullet lifetime
-    - collision detections
+    - //collision detections
+- asteroids
+- multiple asteroids
+    - problem when collision checking with moved values
 ---------
 - collision detection https://happycoding.io/tutorials/processing/collision-detection
     eerst maken we een simpele circle - circle CD systeem, later kunnen we met line instersection werken https://gamedev.stackexchange.com/questions/89929/collision-detection-between-triangle-and-polygon
@@ -25,13 +28,13 @@ a clone (enhancement?) of the classic asteroids game
 ## Refactor
 
 - input met match pattern
+------------
 - collision detection //met traits met faction flag (zodat als er collision is, je kan kijken naar friendly fire)
     todo: 
         - collision detection 'timing' 
             (test collision of ship against all asteroids, vice verse not necessary,
              test collision of all bullets against all asteroids)
         - program consequence of collision into traitobject + implementation
-------------
 - aparte bestandjes
 
 ## MVP

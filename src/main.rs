@@ -16,28 +16,46 @@ use prelude::*;
 #[macroquad::main("Rusteroids")]
 async fn main() {
     let mut ship = Ship::new();
-    let mut asteroid = Asteroid::new();
+    let mut asteroids = Vec::new();
     loop {
-        update(&mut ship, &mut asteroid);
-        draw(&ship, &asteroid);
+        update(&mut ship, &mut asteroids);
+        draw(&ship, &asteroids);
         next_frame().await;
     }
 }
 
-fn update(ship: &mut Ship, asteroid: &mut Asteroid) {
+fn update(ship: &mut Ship, asteroids: &mut Vec<Asteroid>) {
     ship.update();
-    asteroid.update();
-    if ship.collision_detected(asteroid) {
-        ship.collision_consequence();
-        asteroid.collision_consequence();
-    } else {
-        ship.color = BLUE;
-        asteroid.color = GREEN;
+    for asteroid in asteroids {
+        asteroid.update();
+        if ship.collision_detected(asteroid) {
+            ship.collision_consequence();
+            asteroid.collision_consequence();
+        } else {
+            ship.color = BLUE;
+            asteroid.color = GREEN;
+        }
     }
+
+    // for proj in &mut ship.projectiles {
+    //     proj.update();
+    //     for asteroid in asteroids {
+    //         //asteroid.update();
+    //         if proj.collision_detected(asteroid) {
+    //             proj.collision_consequence();
+    //             asteroid.collision_consequence();
+    //         } else {
+    //             ship.color = BLUE;
+    //             asteroid.color = GREEN;
+    //         }
+    //     }
+    // }
 }
 
-fn draw(ship: &Ship, asteroid: &Asteroid) {
+fn draw(ship: &Ship, asteroids: &[Asteroid]) {
     clear_background(BLACK);
     ship.draw();
-    asteroid.draw();
+    for asteroid in asteroids {
+        asteroid.draw();
+    }
 }
