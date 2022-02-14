@@ -25,7 +25,7 @@ a clone (enhancement?) of the classic asteroids game
 ## Refactor
 
 - input met match pattern
-- collision detection met traits met faction flag (zodat als er collision is, je kan kijken naar friendly fire)
+- collision detection //met traits met faction flag (zodat als er collision is, je kan kijken naar friendly fire)
     todo: 
         - collision detection 'timing' 
             (test collision of ship against all asteroids, vice verse not necessary,

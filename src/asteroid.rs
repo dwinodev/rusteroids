@@ -69,8 +69,7 @@ impl Collidable for Asteroid {
     fn radius(&self) -> f32 {
         self.size / 1.1
     }
-
-    fn collision_detected(&self, other: &dyn Collidable) -> bool {
-        self.center().distance(other.center()) <= self.radius() + other.radius()
+    fn collision_consequence(&mut self) {
+        self.color = RED;
     }
 }
