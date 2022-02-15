@@ -4,18 +4,16 @@ a clone (enhancement?) of the classic asteroids game
 
 # Process
 
-- ship hit-delay grace period
-    - otherwise it wil keep getting hit 
-- asteroids split when hit
-    in one loop or in a diffrent one?
-    
+---------
+
 ---------
 - shooting
-    - delay
-    - bullet lifetime
-    - bullets dissapear when they hit an asteroid
+    - //delay
+    - //max amount of bullets on screen
+    - //bullet lifetime
+    - //bullets dissapear when they hit an asteroid
     - //collision detections
----------
+- asteroids split when hit
 - multiple asteroids
     - problem when collision checking with moved values --> solved with .iter_mut() 
     https://pr0.uk/rust/programming/loop/borrow-checker/2019/09/02/rust-inner-loop.html
@@ -38,10 +36,11 @@ a clone (enhancement?) of the classic asteroids game
 - asteroid split-when-hit functionality 
     -> one loop or two?
     -> magic number 20 (how many times does it split?)
-- 1 function for bounds-checking shared by all collidable objects
 - cleanup_asteroids (unnecessary loop?)
 - input met match pattern
+
 ------------
+- 1 function for bounds-checking shared by all collidable objects
 ------------
 - put main code in a game object that handles game state, with an update and a draw function
 - input code in seperate module
@@ -58,11 +57,11 @@ a clone (enhancement?) of the classic asteroids game
 
 ## MVP
 
-- ship (triangle)
-- that can move (thrust from back of ship, angular movement)
-- and can shoot ( little circles)
-- at asteroids (irregular polygons)
-- that divide when shot (smaller irregular polygons)
+- //ship (triangle)
+- //that can move (thrust from back of ship, angular movement)
+- //and can shoot ( little circles)
+- //at asteroids (irregular polygons)
+- //that divide when shot (smaller irregular polygons)
 - also, there are spaceships that fire back
 - when you are hit, you lose a life (collision detection)
 - scoring
@@ -70,3 +69,6 @@ a clone (enhancement?) of the classic asteroids game
 ## Enhancement
 
 - collision detection met line-line intersection 'pixel perfect' https://gamedev.stackexchange.com/questions/89929/collision-detection-between-triangle-and-polygon
+- ship hit-delay grace period
+    - otherwise it wil keep getting hit 
+    

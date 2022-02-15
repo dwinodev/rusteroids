@@ -1,8 +1,9 @@
 use crate::prelude::*;
 
 pub struct Game {
-    ship: Ship,
+    pub ship: Ship,
     asteroids: Vec<Asteroid>,
+    pub frame_count: u32,
 }
 
 impl Game {
@@ -15,6 +16,7 @@ impl Game {
         Self {
             ship: Ship::new(),
             asteroids: asteroids_init,
+            frame_count: 0,
         }
     }
     pub fn init(&mut self) {
@@ -27,7 +29,11 @@ impl Game {
         self.asteroids = asteroids_init;
     }
     pub fn update(&mut self) {
-        process_input(&mut self.ship);
+        self.frame_count += 1;
+        if self.frame_count > 1000 && self.asteroids.len() < 5 {
+            self.asteroids.push(Asteroid::new());
+        }
+        process_input(self);
         self.ship.update();
         self.update_asteroids();
         self.update_projectiles();
@@ -85,7 +91,7 @@ impl Game {
     fn cleanup_projectiles(&mut self) {
         let mut i: usize = 0;
         while i < self.ship.projectiles.len() {
-            if self.ship.projectiles[i].hit {
+            if self.ship.projectiles[i].remove {
                 self.ship.projectiles.remove(i);
             } else {
                 i += 1;

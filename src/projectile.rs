@@ -4,9 +4,8 @@ pub struct Projectile {
     pub position: Vec2,
     velocity: Vec2,
     pub color: Color,
-    pub hit: bool,
-    //acceleration: Vec2,
-    //angle: f32,
+    pub remove: bool,
+    pub frame_count: u32,
 }
 
 impl Projectile {
@@ -20,36 +19,52 @@ impl Projectile {
             position: ship.position,
             velocity: distance,
             color: YELLOW,
-            hit: false,
+            remove: false,
+            frame_count: 0,
         }
     }
     pub fn update(&mut self) {
+        if self.frame_count >= 250 {
+            self.remove = true;
+        }
         self.position += self.velocity;
 
-        println!("{:?}", self.velocity);
+        self.frame_count += 1;
 
-        if self.position.x < 0.0 - self.size * 2.0 {
-            self.position.x = screen_width() + self.size * 2.0;
-        } else if self.position.x > screen_width() + self.size * 2.0 {
-            self.position.x = 0.0 - self.size * 2.0;
+        if self.position.x < 0.0 {
+            self.position.x = screen_width();
+        } else if self.position.x > screen_width() {
+            self.position.x = 0.0;
         }
 
-        if self.position.y < 0.0 - self.size * 2.0 {
-            self.position.y = screen_height() + self.size * 2.0;
-        } else if self.position.y > screen_height() + self.size * 2.0 {
-            self.position.y = 0.0 - self.size * 2.0;
+        if self.position.y < 0.0 {
+            self.position.y = screen_height();
+        } else if self.position.y > screen_height() {
+            self.position.y = 0.0;
         }
+
+        // if self.position.x < 0.0 - self.size * 2.0 {
+        //     self.position.x = screen_width() + self.size * 2.0;
+        // } else if self.position.x > screen_width() + self.size * 2.0 {
+        //     self.position.x = 0.0 - self.size * 2.0;
+        // }
+
+        // if self.position.y < 0.0 - self.size * 2.0 {
+        //     self.position.y = screen_height() + self.size * 2.0;
+        // } else if self.position.y > screen_height() + self.size * 2.0 {
+        //     self.position.y = 0.0 - self.size * 2.0;
+        // }
     }
 
     pub fn draw(&self) {
         draw_circle_lines(self.position.x, self.position.y, self.size, 1.0, WHITE);
 
-        draw_circle(
-            self.position.x,
-            self.position.y,
-            self.size / 1.1,
-            self.color,
-        );
+        // draw_circle(
+        //     self.position.x,
+        //     self.position.y,
+        //     self.size / 1.1,
+        //     self.color,
+        // );
     }
 }
 
@@ -62,6 +77,6 @@ impl Collidable for Projectile {
         self.size / 1.1
     }
     fn collision_consequence(&mut self) {
-        self.hit = true;
+        self.remove = true;
     }
 }

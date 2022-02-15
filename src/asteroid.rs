@@ -54,12 +54,12 @@ impl Asteroid {
             WHITE,
         );
 
-        draw_circle(
-            self.position.x,
-            self.position.y,
-            self.size / 1.1,
-            self.color,
-        );
+        // draw_circle(
+        //     self.position.x,
+        //     self.position.y,
+        //     self.size / 1.1,
+        //     self.color,
+        // );
     }
 }
 

@@ -10,6 +10,8 @@ pub struct Ship {
     pub color: Color,
 
     pub projectiles: Vec<Projectile>,
+
+    pub shot_delay: u32,
 }
 
 impl Ship {
@@ -24,6 +26,8 @@ impl Ship {
             color: BLUE,
 
             projectiles: Vec::new(),
+
+            shot_delay: 0,
         }
     }
 
@@ -44,8 +48,8 @@ impl Ship {
     }
 
     pub fn thrust(&mut self) {
-        let x: f32 = self.position.x + (-0.25 * self.angle.cos());
-        let y: f32 = self.position.y + (-0.25 * self.angle.sin());
+        let x: f32 = self.position.x + (-0.1 * self.angle.cos());
+        let y: f32 = self.position.y + (-0.1 * self.angle.sin());
         let direction = Vec2::new(x, y);
 
         let distance = self.position - direction;
@@ -62,8 +66,12 @@ impl Ship {
     }
 
     pub fn update(&mut self) {
+        if self.shot_delay > 0 {
+            self.shot_delay -= 1;
+        }
+
         self.velocity += self.acceleration;
-        self.velocity.clamp_length(-1.0, 1.0);
+        self.velocity.clamp_length(-0.25, 0.25);
         self.position += self.velocity;
 
         self.acceleration = Vec2::new(0.0, 0.0);
@@ -123,12 +131,12 @@ impl Ship {
             WHITE,
         );
 
-        draw_circle(
-            self.position.x,
-            self.position.y,
-            self.height / 1.5,
-            self.color,
-        );
+        // draw_circle(
+        //     self.position.x,
+        //     self.position.y,
+        //     self.height / 1.5,
+        //     self.color,
+        // );
 
         for projectile in &self.projectiles {
             projectile.draw();
