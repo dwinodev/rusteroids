@@ -14,6 +14,8 @@ a clone (enhancement?) of the classic asteroids game
 - asteroids split when hit
     in one loop or in a diffrent one?
 ---------
+
+---------
 - multiple asteroids
     - problem when collision checking with moved values --> solved with .iter_mut() 
     https://pr0.uk/rust/programming/loop/borrow-checker/2019/09/02/rust-inner-loop.html
@@ -32,12 +34,18 @@ a clone (enhancement?) of the classic asteroids game
 
 ## Refactor
 
-- refactor update loop into subfunctions
+- no magic numbers
+- asteroid split-when-hit functionality 
+    -> one loop or two?
+    -> magic number 20 (how many times does it split?)
 - 1 function for bounds-checking shared by all collidable objects
-- put main code in a game object that handles game state, with an update and a draw function
 - cleanup_asteroids (unnecessary loop?)
 - input met match pattern
 ------------
+- put main code in a game object that handles game state, with an update and a draw function
+------------
+- input code in seperate module
+- refactor update loop into subfunctions    
 - gameloop ownership issues
     gebruik iter_mut() voor een iterator waar je mutable elementen moet hebben
 - collision detection //met traits met faction flag (zodat als er collision is, je kan kijken naar friendly fire)

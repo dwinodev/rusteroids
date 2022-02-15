@@ -1,12 +1,10 @@
 use crate::prelude::*;
-/////////////
-// PROJECTILE
-/////////////
 pub struct Projectile {
     pub size: f32,
     pub position: Vec2,
     velocity: Vec2,
     pub color: Color,
+    pub hit: bool,
     //acceleration: Vec2,
     //angle: f32,
 }
@@ -22,6 +20,7 @@ impl Projectile {
             position: ship.position,
             velocity: distance,
             color: YELLOW,
+            hit: false,
         }
     }
     pub fn update(&mut self) {
@@ -63,6 +62,6 @@ impl Collidable for Projectile {
         self.size / 1.1
     }
     fn collision_consequence(&mut self) {
-        self.color = RED;
+        self.hit = true;
     }
 }

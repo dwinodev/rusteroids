@@ -2,11 +2,15 @@
 
 mod asteroid;
 mod collidable;
+mod game;
+mod input;
 mod projectile;
 mod ship;
 mod prelude {
     pub use crate::asteroid::*;
     pub use crate::collidable::*;
+    pub use crate::game::*;
+    pub use crate::input::*;
     pub use crate::projectile::*;
     pub use crate::ship::*;
     pub use macroquad::{prelude::*, rand::gen_range};
@@ -28,6 +32,7 @@ async fn main() {
 }
 
 fn update(ship: &mut Ship, asteroids: &mut Vec<Asteroid>) {
+    process_input(ship);
     ship.update();
     update_asteroids(asteroids, ship);
     update_projectiles(ship, asteroids);
@@ -66,6 +71,7 @@ fn cleanup_asteroids(asteroids: &mut Vec<Asteroid>) {
 }
 
 fn update_projectiles(ship: &mut Ship, asteroids: &mut Vec<Asteroid>) {
+    cleanup_projectiles(ship);
     ship.projectiles.iter_mut().for_each(|proj| {
         proj.update();
         for asteroid in asteroids.iter_mut() {
@@ -79,6 +85,16 @@ fn update_projectiles(ship: &mut Ship, asteroids: &mut Vec<Asteroid>) {
             }
         }
     });
+}
+fn cleanup_projectiles(ship: &mut Ship) {
+    let mut i: usize = 0;
+    while i < ship.projectiles.len() {
+        if ship.projectiles[i].hit {
+            ship.projectiles.remove(i);
+        } else {
+            i += 1;
+        }
+    }
 }
 
 fn draw(ship: &Ship, asteroids: &[Asteroid]) {

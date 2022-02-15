@@ -26,6 +26,7 @@ impl Ship {
             projectiles: Vec::new(),
         }
     }
+
     fn calculate_points(&self) -> (Vec2, Vec2, Vec2) {
         let x: f32 = self.position.x + (self.height * self.angle.cos());
         let y: f32 = self.position.y + (self.height * self.angle.sin());
@@ -42,31 +43,27 @@ impl Ship {
         (front_point, back_point_l, back_point_r)
     }
 
-    fn shoot(&mut self) {
+    pub fn thrust(&mut self) {
+        let x: f32 = self.position.x + (-0.25 * self.angle.cos());
+        let y: f32 = self.position.y + (-0.25 * self.angle.sin());
+        let direction = Vec2::new(x, y);
+
+        let distance = self.position - direction;
+
+        self.acceleration = distance;
+    }
+
+    pub fn change_angle(&mut self, delta_angle: f32) {
+        self.angle += delta_angle;
+    }
+
+    pub fn shoot(&mut self) {
         self.projectiles.push(Projectile::new(self));
     }
 
     pub fn update(&mut self) {
-        if is_key_down(KeyCode::Up) {
-            let x: f32 = self.position.x + (-0.1 * self.angle.cos());
-            let y: f32 = self.position.y + (-0.1 * self.angle.sin());
-            let direction = Vec2::new(x, y);
-
-            let distance = self.position - direction;
-
-            self.acceleration = distance;
-        }
-
-        if is_key_down(KeyCode::Left) {
-            self.angle -= 0.05;
-        }
-
-        if is_key_down(KeyCode::Right) {
-            self.angle += 0.05;
-        }
-
         self.velocity += self.acceleration;
-        self.velocity.clamp_length(-2.0, 2.0);
+        self.velocity.clamp_length(-1.0, 1.0);
         self.position += self.velocity;
 
         self.acceleration = Vec2::new(0.0, 0.0);
@@ -81,10 +78,6 @@ impl Ship {
             self.position.y = screen_height();
         } else if self.position.y > screen_height() {
             self.position.y = 0.0;
-        }
-
-        if is_key_down(KeyCode::Space) {
-            self.shoot();
         }
 
         for projectile in &mut self.projectiles {
@@ -153,6 +146,8 @@ impl Collidable for Ship {
     }
 
     fn collision_consequence(&mut self) {
-        self.color = RED;
+        self.position = Vec2::new(screen_width() / 2.0, screen_height() / 2.0);
+        self.velocity = Vec2::new(0.0, 0.0);
+        self.angle = 0.0;
     }
 }
