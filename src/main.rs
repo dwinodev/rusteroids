@@ -1,4 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
+
 mod asteroid;
 mod collidable;
 mod projectile;
@@ -11,6 +12,7 @@ mod prelude {
     pub use macroquad::{prelude::*, rand::gen_range};
 }
 use prelude::*;
+
 #[macroquad::main("Rusteroids")]
 async fn main() {
     let mut ship = Ship::new();
@@ -24,9 +26,16 @@ async fn main() {
         next_frame().await;
     }
 }
+
 fn update(ship: &mut Ship, asteroids: &mut Vec<Asteroid>) {
     ship.update();
-    for asteroid in asteroids.iter_mut() {
+    update_asteroids(asteroids, ship);
+    update_projectiles(ship, asteroids);
+}
+
+fn update_asteroids(asteroids: &mut Vec<Asteroid>, ship: &mut Ship) {
+    cleanup_asteroids(asteroids);
+    asteroids.iter_mut().for_each(|asteroid| {
         asteroid.update();
         if ship.collision_detected(asteroid) {
             ship.collision_consequence();
@@ -36,8 +45,28 @@ fn update(ship: &mut Ship, asteroids: &mut Vec<Asteroid>) {
             ship.color = BLUE;
             asteroid.color = GREEN;
         }
+    });
+}
+
+fn cleanup_asteroids(asteroids: &mut Vec<Asteroid>) {
+    let mut i: usize = 0;
+    while i < asteroids.len() {
+        if asteroids[i].hit {
+            let old_size = asteroids[i].size;
+            let old_position = asteroids[i].position;
+            asteroids.remove(i);
+            if old_size > 20.0 {
+                asteroids.push(Asteroid::new_after_hit(old_size, old_position));
+                asteroids.push(Asteroid::new_after_hit(old_size, old_position));
+            }
+        } else {
+            i += 1;
+        }
     }
-    for proj in ship.projectiles.iter_mut() {
+}
+
+fn update_projectiles(ship: &mut Ship, asteroids: &mut Vec<Asteroid>) {
+    ship.projectiles.iter_mut().for_each(|proj| {
         proj.update();
         for asteroid in asteroids.iter_mut() {
             if proj.collision_detected(asteroid) {
@@ -49,8 +78,9 @@ fn update(ship: &mut Ship, asteroids: &mut Vec<Asteroid>) {
                 //asteroid.color = GREEN;
             }
         }
-    }
+    });
 }
+
 fn draw(ship: &Ship, asteroids: &[Asteroid]) {
     clear_background(BLACK);
     ship.draw();

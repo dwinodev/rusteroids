@@ -4,12 +4,15 @@ a clone (enhancement?) of the classic asteroids game
 
 # Process
 
+- ship hit-delay grace period
+    - otherwise it wil keep getting hit 
 - shooting
     - delay
     - bullet lifetime
+    - bullets dissapear when they hit an asteroid
     - //collision detections
-- asteroids
-
+- asteroids split when hit
+    in one loop or in a diffrent one?
 ---------
 - multiple asteroids
     - problem when collision checking with moved values --> solved with .iter_mut() 
@@ -29,8 +32,10 @@ a clone (enhancement?) of the classic asteroids game
 
 ## Refactor
 
+- refactor update loop into subfunctions
 - 1 function for bounds-checking shared by all collidable objects
 - put main code in a game object that handles game state, with an update and a draw function
+- cleanup_asteroids (unnecessary loop?)
 - input met match pattern
 ------------
 - gameloop ownership issues

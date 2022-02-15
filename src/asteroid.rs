@@ -4,6 +4,7 @@ pub struct Asteroid {
     pub position: Vec2,
     velocity: Vec2,
     pub color: Color,
+    pub hit: bool,
 }
 impl Asteroid {
     pub fn new() -> Self {
@@ -15,6 +16,16 @@ impl Asteroid {
             ),
             velocity: Vec2::new(gen_range(0.5, 2.5), gen_range(0.5, 2.5)),
             color: GREEN,
+            hit: false,
+        }
+    }
+    pub fn new_after_hit(old_size: f32, old_position: Vec2) -> Self {
+        Self {
+            size: old_size / 2.0,
+            position: old_position,
+            velocity: Vec2::new(gen_range(0.5, 2.5), gen_range(0.5, 2.5)),
+            color: GREEN,
+            hit: false,
         }
     }
     pub fn update(&mut self) {
@@ -61,6 +72,6 @@ impl Collidable for Asteroid {
         self.size / 1.1
     }
     fn collision_consequence(&mut self) {
-        self.color = RED;
+        self.hit = true;
     }
 }
