@@ -1,27 +1,19 @@
 use crate::prelude::*;
-
-///////////
-// ASTEROID
-///////////
 pub struct Asteroid {
     pub size: f32,
     pub position: Vec2,
     velocity: Vec2,
     pub color: Color,
-    //acceleration: Vec2,
-    //angle: f32,
 }
-
 impl Asteroid {
     pub fn new() -> Self {
-        let x_pos_rand = gen_range(0.0, screen_width());
-        let y_pos_rand = gen_range(0.0, screen_height());
-        let x_vel_rand: f32 = gen_range(0.5, 2.5);
-        let y_vel_rand: f32 = gen_range(0.5, 2.5);
         Self {
             size: 75.0,
-            position: Vec2::new(x_pos_rand, y_pos_rand),
-            velocity: Vec2::new(x_vel_rand, y_vel_rand),
+            position: Vec2::new(
+                gen_range(0.0, screen_width()),
+                gen_range(0.0, screen_height()),
+            ),
+            velocity: Vec2::new(gen_range(0.5, 2.5), gen_range(0.5, 2.5)),
             color: GREEN,
         }
     }
@@ -40,7 +32,6 @@ impl Asteroid {
             self.position.y = 0.0 - self.size * 2.0;
         }
     }
-
     pub fn draw(&self) {
         draw_poly_lines(
             self.position.x,

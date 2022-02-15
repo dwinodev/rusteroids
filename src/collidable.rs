@@ -1,5 +1,4 @@
 use crate::prelude::*;
-
 pub trait Collidable {
     fn center(&self) -> Vec2;
     fn radius(&self) -> f32;

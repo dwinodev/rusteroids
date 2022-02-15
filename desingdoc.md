@@ -9,9 +9,11 @@ a clone (enhancement?) of the classic asteroids game
     - bullet lifetime
     - //collision detections
 - asteroids
-- multiple asteroids
-    - problem when collision checking with moved values
+
 ---------
+- multiple asteroids
+    - problem when collision checking with moved values --> solved with .iter_mut() 
+    https://pr0.uk/rust/programming/loop/borrow-checker/2019/09/02/rust-inner-loop.html
 - collision detection https://happycoding.io/tutorials/processing/collision-detection
     eerst maken we een simpele circle - circle CD systeem, later kunnen we met line instersection werken https://gamedev.stackexchange.com/questions/89929/collision-detection-between-triangle-and-polygon
     collision detection moet eigenlijk bij elke individuele update gebeuren (traits gebruiken), nu gebeurt het nog 1 keer
@@ -27,8 +29,12 @@ a clone (enhancement?) of the classic asteroids game
 
 ## Refactor
 
+- 1 function for bounds-checking shared by all collidable objects
+- put main code in a game object that handles game state, with an update and a draw function
 - input met match pattern
 ------------
+- gameloop ownership issues
+    gebruik iter_mut() voor een iterator waar je mutable elementen moet hebben
 - collision detection //met traits met faction flag (zodat als er collision is, je kan kijken naar friendly fire)
     todo: 
         - collision detection 'timing' 

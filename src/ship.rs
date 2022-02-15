@@ -1,7 +1,4 @@
 use crate::prelude::*;
-///////
-// SHIP
-///////
 pub struct Ship {
     pub height: f32,
 
