@@ -63,12 +63,12 @@ a clone (enhancement?) of the classic asteroids game
 - //at asteroids (irregular polygons)
 - //that divide when shot (smaller irregular polygons)
 - also, there are spaceships that fire back
-- when you are hit, you lose a life (collision detection)
-- scoring
+- //when you are hit, you lose a life (collision detection)
+- //scoring
 
 ## Enhancement
 
-- collision detection met line-line intersection 'pixel perfect' https://gamedev.stackexchange.com/questions/89929/collision-detection-between-triangle-and-polygon
+- collision detection with line-line intersection 'pixel perfect' https://gamedev.stackexchange.com/questions/89929/collision-detection-between-triangle-and-polygon
 - ship hit-delay grace period
     - otherwise it wil keep getting hit 
     

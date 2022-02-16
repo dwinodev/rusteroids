@@ -12,6 +12,8 @@ pub struct Ship {
     pub projectiles: Vec<Projectile>,
 
     pub shot_delay: u32,
+
+    pub lives: i8,
 }
 
 impl Ship {
@@ -28,6 +30,8 @@ impl Ship {
             projectiles: Vec::new(),
 
             shot_delay: 0,
+
+            lives: 5,
         }
     }
 
@@ -157,5 +161,6 @@ impl Collidable for Ship {
         self.position = Vec2::new(screen_width() / 2.0, screen_height() / 2.0);
         self.velocity = Vec2::new(0.0, 0.0);
         self.angle = 0.0;
+        self.lives -= 1;
     }
 }

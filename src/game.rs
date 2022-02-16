@@ -3,7 +3,14 @@ use crate::prelude::*;
 pub struct Game {
     pub ship: Ship,
     asteroids: Vec<Asteroid>,
-    pub frame_count: u32,
+    score: u32,
+    pub state: GameState,
+}
+
+pub enum GameState {
+    Menu,
+    Playing,
+    GameOver,
 }
 
 impl Game {
@@ -16,7 +23,8 @@ impl Game {
         Self {
             ship: Ship::new(),
             asteroids: asteroids_init,
-            frame_count: 0,
+            score: 0,
+            state: GameState::Playing,
         }
     }
     pub fn init(&mut self) {
@@ -27,16 +35,21 @@ impl Game {
             asteroids_init.push(Asteroid::new());
         }
         self.asteroids = asteroids_init;
+        self.score = 0;
     }
     pub fn update(&mut self) {
-        self.frame_count += 1;
-        if self.frame_count > 1000 && self.asteroids.len() < 5 {
-            self.asteroids.push(Asteroid::new());
+        process_keys(self);
+        match self.state {
+            GameState::Playing => {
+                self.ship.update();
+            }
+            GameState::GameOver => {}
+            GameState::Menu => {}
         }
-        process_input(self);
         self.ship.update();
         self.update_asteroids();
         self.update_projectiles();
+        self.check_game_state();
     }
     fn update_asteroids(&mut self) {
         self.cleanup_asteroids();
@@ -45,10 +58,6 @@ impl Game {
             if self.ship.collision_detected(asteroid) {
                 self.ship.collision_consequence();
                 asteroid.collision_consequence();
-            } else {
-                // TO REMOVE
-                self.ship.color = BLUE;
-                asteroid.color = GREEN;
             }
         });
     }
@@ -76,14 +85,11 @@ impl Game {
         self.cleanup_projectiles();
         self.ship.projectiles.iter_mut().for_each(|proj| {
             proj.update();
-            for asteroid in self.asteroids.iter_mut() {
+            for asteroid in &mut self.asteroids {
                 if proj.collision_detected(asteroid) {
                     proj.collision_consequence();
                     asteroid.collision_consequence();
-                } else {
-                    // TO REMOVE
-                    proj.color = YELLOW;
-                    //asteroid.color = GREEN;
+                    self.score += 1;
                 }
             }
         });
@@ -98,9 +104,37 @@ impl Game {
             }
         }
     }
+
+    fn check_game_state(&mut self) {
+        if self.ship.lives < 1 {
+            self.state = GameState::GameOver;
+        }
+    }
     pub fn draw(&self) {
         clear_background(BLACK);
-        self.ship.draw();
+        match self.state {
+            GameState::Playing => {
+                self.ship.draw();
+                draw_text(&self.score.to_string(), 50.0, 50.0, 50.0, WHITE);
+            }
+            GameState::GameOver => {
+                draw_text(
+                    "GAME OVER",
+                    screen_width() / 3.0,
+                    screen_height() / 2.0,
+                    50.0,
+                    WHITE,
+                );
+                draw_text(
+                    "press 'r' to restart",
+                    screen_width() / 3.0,
+                    screen_height() / 2.0 + 50.0,
+                    25.0,
+                    WHITE,
+                );
+            }
+            GameState::Menu => {}
+        }
         for asteroid in &self.asteroids {
             asteroid.draw();
         }
