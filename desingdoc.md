@@ -8,6 +8,7 @@ a clone (enhancement?) of the classic asteroids game
 ---------
 
 ---------
+- sounds
 - shooting
     - //delay
     - //max amount of bullets on screen

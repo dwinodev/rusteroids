@@ -12,6 +12,7 @@ pub struct Ship {
     pub projectiles: Vec<Projectile>,
 
     pub shot_delay: u32,
+    pub thrust_sound_delay: u32,
 
     pub lives: i8,
 }
@@ -30,6 +31,7 @@ impl Ship {
             projectiles: Vec::new(),
 
             shot_delay: 0,
+            thrust_sound_delay: 0,
 
             lives: 5,
         }
@@ -45,6 +47,7 @@ impl Ship {
             color: BLUE,
             projectiles: Vec::new(),
             shot_delay: 0,
+            thrust_sound_delay: 0,
             lives: 0,
         }
     }
@@ -86,6 +89,9 @@ impl Ship {
     pub fn update(&mut self) {
         if self.shot_delay > 0 {
             self.shot_delay -= 1;
+        }
+        if self.thrust_sound_delay > 0 {
+            self.thrust_sound_delay -= 1;
         }
 
         self.velocity += self.acceleration;

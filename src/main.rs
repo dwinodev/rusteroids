@@ -22,7 +22,13 @@ async fn main() {
     let mut game = Game::new();
 
     let fire_sound = load_sound("assets/fire.wav").await.unwrap();
-    game.fire_sound.push(fire_sound);
+    let explosion_sound = load_sound("assets/explosion.wav").await.unwrap();
+    let thrust_sound = load_sound("assets/thrust.wav").await.unwrap();
+    let game_over_sound = load_sound("assets/game_over.wav").await.unwrap();
+    game.sounds.push(fire_sound);
+    game.sounds.push(explosion_sound);
+    game.sounds.push(thrust_sound);
+    game.sounds.push(game_over_sound);
 
     loop {
         game.update();
