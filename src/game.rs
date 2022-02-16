@@ -5,6 +5,7 @@ pub struct Game {
     asteroids: Vec<Asteroid>,
     score: u32,
     pub state: GameState,
+    pub fire_sound: Vec<Sound>,
 }
 
 pub enum GameState {
@@ -25,6 +26,7 @@ impl Game {
             asteroids: asteroids_init,
             score: 0,
             state: GameState::Menu,
+            fire_sound: Vec::new(),
         }
     }
     pub fn init(&mut self) {
@@ -36,7 +38,6 @@ impl Game {
         }
         self.asteroids = asteroids_init;
         self.score = 0;
-        clear_background(BLACK);
     }
     pub fn update(&mut self) {
         match self.state {
