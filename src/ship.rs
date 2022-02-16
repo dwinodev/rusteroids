@@ -35,6 +35,20 @@ impl Ship {
         }
     }
 
+    pub fn new_empty() -> Self {
+        Self {
+            height: 0.0,
+            position: Vec2::new(-1000.0, -1000.0),
+            velocity: Vec2::new(0.0, 0.0),
+            acceleration: Vec2::new(0.0, 0.0),
+            angle: 0.0,
+            color: BLUE,
+            projectiles: Vec::new(),
+            shot_delay: 0,
+            lives: 0,
+        }
+    }
+
     fn calculate_points(&self) -> (Vec2, Vec2, Vec2) {
         let x: f32 = self.position.x + (self.height * self.angle.cos());
         let y: f32 = self.position.y + (self.height * self.angle.sin());
@@ -52,8 +66,8 @@ impl Ship {
     }
 
     pub fn thrust(&mut self) {
-        let x: f32 = self.position.x + (-0.1 * self.angle.cos());
-        let y: f32 = self.position.y + (-0.1 * self.angle.sin());
+        let x: f32 = self.position.x + (-0.075 * self.angle.cos());
+        let y: f32 = self.position.y + (-0.075 * self.angle.sin());
         let direction = Vec2::new(x, y);
 
         let distance = self.position - direction;
@@ -75,7 +89,7 @@ impl Ship {
         }
 
         self.velocity += self.acceleration;
-        self.velocity.clamp_length(-0.25, 0.25);
+        self.velocity.clamp_length(-0.2, 0.2);
         self.position += self.velocity;
 
         self.acceleration = Vec2::new(0.0, 0.0);

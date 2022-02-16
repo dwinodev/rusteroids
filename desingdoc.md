@@ -4,6 +4,7 @@ a clone (enhancement?) of the classic asteroids game
 
 # Process
 
+- shot speed increase with ship velocity?
 ---------
 
 ---------

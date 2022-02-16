@@ -21,10 +21,10 @@ impl Game {
             asteroids_init.push(Asteroid::new());
         }
         Self {
-            ship: Ship::new(),
+            ship: Ship::new_empty(),
             asteroids: asteroids_init,
             score: 0,
-            state: GameState::Playing,
+            state: GameState::Menu,
         }
     }
     pub fn init(&mut self) {
@@ -36,20 +36,22 @@ impl Game {
         }
         self.asteroids = asteroids_init;
         self.score = 0;
+        clear_background(BLACK);
     }
     pub fn update(&mut self) {
-        process_keys(self);
         match self.state {
             GameState::Playing => {
+                process_keys(self);
                 self.ship.update();
+                self.update_asteroids();
+                self.update_projectiles();
+                self.check_game_state();
             }
-            GameState::GameOver => {}
-            GameState::Menu => {}
+            _ => {
+                process_keys(self);
+                self.update_asteroids();
+            }
         }
-        self.ship.update();
-        self.update_asteroids();
-        self.update_projectiles();
-        self.check_game_state();
     }
     fn update_asteroids(&mut self) {
         self.cleanup_asteroids();
@@ -61,7 +63,6 @@ impl Game {
             }
         });
     }
-
     fn cleanup_asteroids(&mut self) {
         let mut i: usize = 0;
         while i < self.asteroids.len() {
@@ -80,7 +81,6 @@ impl Game {
             }
         }
     }
-
     fn update_projectiles(&mut self) {
         self.cleanup_projectiles();
         self.ship.projectiles.iter_mut().for_each(|proj| {
@@ -89,7 +89,14 @@ impl Game {
                 if proj.collision_detected(asteroid) {
                     proj.collision_consequence();
                     asteroid.collision_consequence();
-                    self.score += 1;
+
+                    if asteroid.size > 40.0 {
+                        self.score += 10;
+                    } else if asteroid.size > 20.0 {
+                        self.score += 20;
+                    } else {
+                        self.score += 30;
+                    }
                 }
             }
         });
@@ -104,10 +111,10 @@ impl Game {
             }
         }
     }
-
     fn check_game_state(&mut self) {
-        if self.ship.lives < 1 {
+        if self.ship.lives < 1 || self.asteroids.is_empty() {
             self.state = GameState::GameOver;
+            self.ship.position = Vec2::new(-1000.0, -1000.0)
         }
     }
     pub fn draw(&self) {
@@ -116,15 +123,29 @@ impl Game {
             GameState::Playing => {
                 self.ship.draw();
                 draw_text(&self.score.to_string(), 50.0, 50.0, 50.0, WHITE);
+                for n in 1..=self.ship.lives {
+                    //draw_circle(n as f32 * 25.0, 65.0, 10.0, WHITE);
+                    draw_poly_lines(n as f32 * 25.0, 65.0, 3, 10.0, 270.0, 1.0, WHITE)
+                }
             }
             GameState::GameOver => {
-                draw_text(
-                    "GAME OVER",
-                    screen_width() / 3.0,
-                    screen_height() / 2.0,
-                    50.0,
-                    WHITE,
-                );
+                if self.asteroids.is_empty() {
+                    draw_text(
+                        "VICTORY!!!",
+                        screen_width() / 3.0,
+                        screen_height() / 2.0,
+                        50.0,
+                        WHITE,
+                    );
+                } else {
+                    draw_text(
+                        "GAME OVER",
+                        screen_width() / 3.0,
+                        screen_height() / 2.0,
+                        50.0,
+                        WHITE,
+                    );
+                }
                 draw_text(
                     "press 'r' to restart",
                     screen_width() / 3.0,
@@ -132,8 +153,17 @@ impl Game {
                     25.0,
                     WHITE,
                 );
+                draw_text(&self.score.to_string(), 50.0, 50.0, 50.0, WHITE);
             }
-            GameState::Menu => {}
+            GameState::Menu => {
+                draw_text(
+                    "press 'space' to play",
+                    screen_width() / 3.0,
+                    screen_height() / 2.0,
+                    30.0,
+                    WHITE,
+                );
+            }
         }
         for asteroid in &self.asteroids {
             asteroid.draw();
