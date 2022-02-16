@@ -69,8 +69,8 @@ impl Ship {
     }
 
     pub fn thrust(&mut self) {
-        let x: f32 = self.position.x + (-0.075 * self.angle.cos());
-        let y: f32 = self.position.y + (-0.075 * self.angle.sin());
+        let x: f32 = self.position.x + (-0.1 * self.angle.cos());
+        let y: f32 = self.position.y + (-0.1 * self.angle.sin());
         let direction = Vec2::new(x, y);
 
         let distance = self.position - direction;

@@ -6,6 +6,8 @@ pub struct Game {
     score: u32,
     pub state: State,
     pub sounds: Vec<Sound>,
+    pub spawn_delay_max: u32,
+    pub spawn_delay: u32,
 }
 
 pub enum State {
@@ -27,6 +29,8 @@ impl Game {
             score: 0,
             state: State::Menu,
             sounds: Vec::new(),
+            spawn_delay_max: 2500,
+            spawn_delay: 2500,
         }
     }
     pub fn init(&mut self) {
@@ -38,8 +42,18 @@ impl Game {
         }
         self.asteroids = asteroids_init;
         self.score = 0;
+        self.spawn_delay = 1000;
+        self.spawn_delay_max = 1000;
     }
     pub fn update(&mut self) {
+        if self.spawn_delay < 1 {
+            self.asteroids.push(Asteroid::new());
+            self.spawn_delay_max =
+                std::cmp::max(self.spawn_delay_max - self.spawn_delay_max / 10, 250);
+            self.spawn_delay = self.spawn_delay_max;
+        } else {
+            self.spawn_delay -= 1;
+        }
         if let State::Playing = self.state {
             process_keys(self);
             self.ship.update();
@@ -130,23 +144,13 @@ impl Game {
                 }
             }
             State::GameOver => {
-                if self.asteroids.is_empty() {
-                    draw_text(
-                        "VICTORY!!!",
-                        screen_width() / 3.0,
-                        screen_height() / 2.0,
-                        50.0,
-                        WHITE,
-                    );
-                } else {
-                    draw_text(
-                        "GAME OVER",
-                        screen_width() / 3.0,
-                        screen_height() / 2.0,
-                        50.0,
-                        WHITE,
-                    );
-                }
+                draw_text(
+                    "GAME OVER",
+                    screen_width() / 3.0,
+                    screen_height() / 2.0,
+                    50.0,
+                    WHITE,
+                );
                 draw_text(
                     "press 'r' to restart",
                     screen_width() / 3.0,
@@ -158,9 +162,30 @@ impl Game {
             }
             State::Menu => {
                 draw_text(
-                    "press 'space' to play",
+                    "thrust: UP ARROW",
                     screen_width() / 3.0,
-                    screen_height() / 2.0,
+                    screen_height() / 3.0,
+                    30.0,
+                    WHITE,
+                );
+                draw_text(
+                    "angle: LEFT & RIGHT ARROW",
+                    screen_width() / 3.0,
+                    screen_height() / 3.0 + 50.0,
+                    30.0,
+                    WHITE,
+                );
+                draw_text(
+                    "missile: SPACE",
+                    screen_width() / 3.0,
+                    screen_height() / 3.0 + 100.0,
+                    30.0,
+                    WHITE,
+                );
+                draw_text(
+                    "press 'r' to play",
+                    screen_width() / 3.0,
+                    screen_height() / 3.0 + 150.0,
                     30.0,
                     WHITE,
                 );

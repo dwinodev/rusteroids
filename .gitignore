@@ -1,3 +1,4 @@
 .vscode/
 target/
 assets/
+dist_wasm/

@@ -14,7 +14,7 @@ impl Asteroid {
                 gen_range(0.0, screen_width()),
                 gen_range(0.0, screen_height()),
             ),
-            velocity: Vec2::new(gen_range(0.5, 2.5), gen_range(0.5, 2.5)),
+            velocity: Vec2::new(gen_range(-2.5, 2.5), gen_range(-2.5, 2.5)),
             color: GREEN,
             hit: false,
         }
@@ -23,7 +23,7 @@ impl Asteroid {
         Self {
             size: old_size / 2.0,
             position: old_position,
-            velocity: Vec2::new(gen_range(0.5, 2.5), gen_range(0.5, 2.5)),
+            velocity: Vec2::new(gen_range(-2.5, 2.5), gen_range(-2.5, 2.5)),
             color: GREEN,
             hit: false,
         }

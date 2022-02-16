@@ -3,7 +3,7 @@ use crate::prelude::*;
 pub fn process_keys(game: &mut Game) {
     match game.state {
         State::Menu => {
-            if is_key_pressed(KeyCode::Space) {
+            if is_key_pressed(KeyCode::R) {
                 game.init();
                 game.state = State::Playing;
             }
